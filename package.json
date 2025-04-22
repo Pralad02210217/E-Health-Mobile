@@ -13,6 +13,7 @@
     "@hookform/resolvers": "^5.0.1",
     "@react-native-async-storage/async-storage": "^2.1.2",
     "@react-native-cookies/cookies": "^6.2.1",
+    "@react-native-picker/picker": "^2.11.0",
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/drawer": "^7.3.9",
     "@react-navigation/native": "^7.1.6",
@@ -25,6 +26,7 @@
     "react-native": "0.74.2",
     "react-native-config": "^1.5.5",
     "react-native-confirmation-code-field": "^7.4.0",
+    "react-native-element-dropdown": "^2.12.4",
     "react-native-gesture-handler": "^2.25.0",
     "react-native-keychain": "^10.0.0",
     "react-native-linear-gradient": "^2.8.3",
@@ -34,6 +36,7 @@
     "react-native-safe-area-context": "^5.4.0",
     "react-native-screens": "^4.10.0",
     "react-native-vector-icons": "^10.2.0",
+    "react-native-video": "^6.13.0",
     "zod": "^3.24.3"
   },
   "devDependencies": {

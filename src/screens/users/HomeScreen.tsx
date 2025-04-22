@@ -21,7 +21,7 @@ import { useAuthContext } from '../../context/auth-context';
 import { useNavigation } from '@react-navigation/native';
 import API from '../../lib/axios';
 import LinearGradient from 'react-native-linear-gradient';
-
+import { Dropdown } from 'react-native-element-dropdown';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -41,8 +41,6 @@ interface Illness {
 
 interface Treatment {
     treatmentId: string;
-    patientId: string;
-    familyMemberId: string | null;
     doctorId: string | null;
     severity: "MILD" | "MODERATE" | "SEVERE";
     notes: string;
@@ -55,10 +53,12 @@ interface Treatment {
     patientBloodType: string;
     patientContactNumber: string;
     patientDateOfBirth: string;
-    patientType: string;
     medicines: Medicine[] | null;
     illnesses: Illness[] | null;
     medicinesUsedCount: string;
+    patientId: string | null;
+    familyMemberId: string | null;
+    patientType: "PATIENT" | "FAMILY_MEMBER";
 }
 
 interface FetchTreatmentsResponse {
@@ -144,6 +144,7 @@ const HomeScreen = () => {
   const navigation = useNavigation();
   const [selectedTreatment, setSelectedTreatment] = useState<Treatment | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState<'all' | 'self' | 'family'>('all');
 
   const { 
     data: treatmentsData,
@@ -165,6 +166,17 @@ const HomeScreen = () => {
     await refetchTreatments();
     setRefreshing(false);
   }, [refetchTreatments]);
+
+  const filterOptions = [
+    { label: 'All Records', value: 'all' },
+    { label: 'My Treatments', value: 'self' },
+    { label: 'Family Members', value: 'family' },
+  ];  
+  const filteredTreatments = treatmentsData?.treatments.filter(treatment => {
+    if (selectedFilter === 'self') return treatment.patientId === user?.id;
+    if (selectedFilter === 'family') return treatment.familyMemberId !== null;
+    return true;
+  }) || [];
 
   useEffect(() => {
     if (!user && !isAuthLoading) {
@@ -226,9 +238,9 @@ const HomeScreen = () => {
               <TouchableOpacity
                 style={styles.modalCloseButton}
                 onPress={() => setSelectedTreatment(null)}
-              >
-                <Ionicons name="close" size={24} color="#555" />
-              </TouchableOpacity>
+                >
+                  <Ionicons name="close" size={24} color="#555" />
+                </TouchableOpacity>
             </View>
             
             <ScrollView style={styles.modalScrollView}>
@@ -351,12 +363,20 @@ const HomeScreen = () => {
   );
 
   const renderTreatmentItem = ({ item }: { item: Treatment }) => {
+    const isFamilyTreatment = item.patientType === 'FAMILY_MEMBER';
     const severityInfo = getSeverityColor(item.severity);
     
     return (
       <View
         style={[styles.treatmentCard, { borderLeftColor: severityInfo.text, borderLeftWidth: 4 }]}
       >
+          {isFamilyTreatment && (
+          <View style={styles.patientTypeBadge}>
+            <Ionicons name="people" size={12} color="#6a1b9a" />
+            <Text style={styles.patientTypeText}>Family Member</Text>
+          </View>
+        )}
+        
         <TouchableOpacity 
           onPress={() => {
             setSelectedTreatment(item);
@@ -372,6 +392,13 @@ const HomeScreen = () => {
               <Text style={[styles.severityBadgeText, { color: severityInfo.text }]}>{item.severity}</Text>
             </View>
           </View>
+          {isFamilyTreatment && (
+            <View>
+              <Text style={styles.treatmentCardDetail}>
+                <MaterialCommunityIcons name="account-circle" size={14} color="#555" /> {item.patientName}
+              </Text>
+            </View>
+          )}
           
           {item.notes && (
             <View style={styles.treatmentCardNotesContainer}>
@@ -462,13 +489,26 @@ const HomeScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <LinearGradient 
-        colors={['#e3f2fd', '#f5f5f5']} 
-        style={styles.headerGradient}
-      >
+     <LinearGradient colors={['#e3f2fd', '#f5f5f5']} style={styles.headerGradient}>
         <View style={styles.headerContainer}>
-          <Text style={styles.pageTitle}>Your Treatment History</Text>
-          <MaterialCommunityIcons name="clipboard-pulse" size={28} color="#2196F3" />
+          <Text style={styles.pageTitle}>Treatment History</Text>
+         {user?.userType!=="STUDENT" && (
+           <Dropdown
+           data={filterOptions}
+           labelField="label"
+           valueField="value"
+           value={selectedFilter}
+           onChange={(item : any) => setSelectedFilter(item.value)}
+           style={styles.dropdown}
+           placeholderStyle={styles.dropdownPlaceholder}
+           selectedTextStyle={styles.dropdownSelectedText}
+           containerStyle={styles.dropdownContainer}
+           itemTextStyle={styles.dropdownItemText}
+           renderRightIcon={() => (
+           <MaterialCommunityIcons name="chevron-down" size={18} color="#666" />
+           )}
+         />
+         )}
         </View>
       </LinearGradient>
       
@@ -491,7 +531,7 @@ const HomeScreen = () => {
           <EmptyStateComponent />
         ) : (
           <FlatList
-            data={treatmentsData.treatments}
+            data={filteredTreatments}
             keyExtractor={(item) => item.treatmentId}
             renderItem={renderTreatmentItem}
             contentContainerStyle={styles.listContentContainer}
@@ -514,6 +554,53 @@ const HomeScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  // headerContainer: {
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  //   justifyContent: 'space-between',
+  //   paddingHorizontal: 16,
+  //   },
+    dropdown: {
+      width: 160,
+      height: 40,
+      backgroundColor: 'white',
+      borderRadius: 8,
+      paddingHorizontal: 12,
+    },
+    dropdownPlaceholder: {
+      color: '#666',
+      fontSize: 14,
+    },
+    dropdownSelectedText: {
+      color: '#333',
+      fontSize: 14,
+    },
+    dropdownContainer: {
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: '#e0e0e0',
+      marginTop: 8,
+    },
+    dropdownItemText: {
+      color: '#333',
+      fontSize: 14,
+    },
+    patientTypeBadge: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: '#f3e5f5',
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: 12,
+      alignSelf: 'flex-start',
+      marginBottom: 8,
+    },
+    patientTypeText: {
+      color: '#6a1b9a',
+      fontSize: 12,
+      marginLeft: 4,
+      fontWeight: '500',
+    },
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',

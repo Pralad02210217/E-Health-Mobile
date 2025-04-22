@@ -5,11 +5,9 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
-import { useNavigation, DrawerActions } from '@react-navigation/native';
+import { useNavigation, NavigationProp, ParamListBase, RouteProp } from '@react-navigation/native';
 import { useAuthContext } from '../context/auth-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Feather from 'react-native-vector-icons/Feather';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -30,11 +28,14 @@ const formatDate = (dateString: any) => {
 
 interface HeaderProps {
   title?: string;
+  navigation: NavigationProp<ParamListBase>; // Type navigation broadly or specifically
+  route: RouteProp<ParamListBase>; // Type route broadly or specifically
+  back?: { title?: string; href?: string } | null;
 }
 
-const Header: React.FC<HeaderProps> = ({ title }) => {
+const Header: React.FC<HeaderProps> = ({ title, back }) => {
   const { user, logout } = useAuthContext();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<any>>();
 
   const userType = user?.userType;
   const available = user?.is_available;
@@ -48,10 +49,20 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
 
   return (
     <View style={styles.headerContainer}>
-      <View style={styles.leftSection}>
-          <Text style={styles.headerTitle}>{title || 'Dashboard'}</Text>
+      {back ? (
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.backButton}
+        >
+          <Text style={styles.backText}>Back</Text>
+        </TouchableOpacity>
+      ): (
+        <View style={styles.leftSection}>
+        <Text style={styles.headerTitle}>{title || 'Dashboard'}</Text>
       </View>
 
+      )}
+     
       <View style={styles.centerSection}></View>
 
       <View style={styles.rightSection}>
@@ -86,7 +97,10 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
               />
             </MenuTrigger>
             <MenuOptions>
-              <MenuOption onSelect={() => {}}>
+              <MenuOption onSelect={() => {
+                  console.log('Profile menu option selected, navigating to Profile');
+                  navigation.navigate('Profile'); 
+              }}>
                 <Text style={styles.menuItem}>Profile</Text>
               </MenuOption>
               <MenuOption onSelect={logout}>
@@ -150,6 +164,21 @@ const styles = StyleSheet.create({
   menuItem: {
     padding: 10,
     fontSize: 16,
+  },
+  iconContainer: { // Wrapper for icons to add consistent padding/margin
+    padding: 5, // Make touchable area larger
+  },
+  backButton: {
+    paddingVertical: 5, // Add some vertical padding
+    paddingHorizontal: 10, // Add horizontal padding
+    marginLeft: -5, // Adjust margin if needed to align with padding
+    justifyContent: 'center', // Center text vertically if button has height
+    alignItems: 'center', // Center text horizontally
+  },
+  backText: {
+      fontSize: 16, // Font size for the text
+      color: '#007bff', // A common color for interactive text/buttons
+      // fontWeight: 'bold', // Optional: make text bold
   },
 });
 
