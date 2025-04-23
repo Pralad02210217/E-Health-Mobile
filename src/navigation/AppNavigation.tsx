@@ -18,6 +18,7 @@ import VerifyLeavesScreen from '../screens/users/VerifyLeavesScreen';
 // Import vector icons
 import Ionicons from 'react-native-vector-icons/Ionicons'; // <-- Import Ionicons
 import ProfileScreen from '../screens/users/ProfileScrenn';
+import StudentHealthVisitsScreen from '../screens/users/StudentHealthVisitsScreen';
 
 
 // Define your RootStackParamList for the main Stack Navigator
@@ -87,7 +88,7 @@ function AuthenticatedTabs() {
       {showVerifyLeavesTab && (
         <Tab.Screen
           name="VerifyLeavesTab"
-          component={VerifyLeavesScreen}
+          component={StudentHealthVisitsScreen}
           options={{
             title: 'Verify Leaves',
              // tabBarIcon: ({ color, size }) => ( /* ... */ ),
