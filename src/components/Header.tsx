@@ -58,7 +58,7 @@ const Header: React.FC<HeaderProps> = ({ title, back }) => {
         </TouchableOpacity>
       ): (
         <View style={styles.leftSection}>
-        <Text style={styles.headerTitle}>{title || 'Dashboard'}</Text>
+        {/* <Text style={styles.headerTitle}>{title || ''}</Text> */}
       </View>
 
       )}
@@ -163,6 +163,7 @@ const styles = StyleSheet.create({
   },
   menuItem: {
     padding: 10,
+    color: "#000",
     fontSize: 16,
   },
   iconContainer: { // Wrapper for icons to add consistent padding/margin

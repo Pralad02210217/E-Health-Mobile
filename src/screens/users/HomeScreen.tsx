@@ -239,24 +239,22 @@ const HomeScreen = () => {
                 style={styles.modalCloseButton}
                 onPress={() => setSelectedTreatment(null)}
                 >
-                  <Ionicons name="close" size={24} color="#555" />
+                  <Text>X</Text>
                 </TouchableOpacity>
             </View>
             
             <ScrollView style={styles.modalScrollView}>
               <View style={styles.detailSection}>
                 <Text style={styles.detailSectionTitle}>
-                  <Ionicons name="person" size={18} color="#444" style={styles.sectionIcon} />
                   Patient Information
                 </Text>
-                <DetailItem label="Name" value={selectedTreatment.patientName} icon="account" />
+                <DetailItem label="Name" value={selectedTreatment.patientName} icon="account-circle" />
                 <DetailItem label="Gender" value={selectedTreatment.patientGender} icon="gender-male-female" />
                 <DetailItem label="Blood Type" value={selectedTreatment.patientBloodType} icon="blood-bag" />
               </View>
 
               <View style={styles.detailSection}>
                 <Text style={styles.detailSectionTitle}>
-                  <Ionicons name="medkit" size={18} color="#444" style={styles.sectionIcon} />
                   Treatment Information
                 </Text>
                 <DetailItem label="Date" value={formatDateTime(selectedTreatment.createdAt)} icon="calendar" />
@@ -307,7 +305,6 @@ const HomeScreen = () => {
               {selectedTreatment.illnesses && selectedTreatment.illnesses.length > 0 && (
                 <View style={styles.detailSection}>
                   <Text style={styles.detailSectionTitle}>
-                    <FontAwesome5 name="disease" size={18} color="#444" style={styles.sectionIcon} />
                     Diagnosed Illnesses
                   </Text>
                   {selectedTreatment.illnesses.map((illness) => (
@@ -332,7 +329,7 @@ const HomeScreen = () => {
               {selectedTreatment.medicines && selectedTreatment.medicines.length > 0 && (
                 <View style={styles.detailSection}>
                   <Text style={styles.detailSectionTitle}>
-                    <MaterialCommunityIcons name="pill" size={18} color="#444" style={styles.sectionIcon} />
+
                     Prescribed Medicines
                   </Text>
                   {selectedTreatment.medicines.map((medicine) => (
@@ -372,7 +369,6 @@ const HomeScreen = () => {
       >
           {isFamilyTreatment && (
           <View style={styles.patientTypeBadge}>
-            <Ionicons name="people" size={12} color="#6a1b9a" />
             <Text style={styles.patientTypeText}>Family Member</Text>
           </View>
         )}
@@ -385,12 +381,12 @@ const HomeScreen = () => {
         >
           <View style={styles.treatmentCardHeader}>
             <Text style={styles.treatmentCardDate}>
-              <Ionicons name="calendar" size={14} color="#888" /> {formatDateTime(item.createdAt)}
+              {formatDateTime(item.createdAt)}
             </Text>
-            <View style={[styles.severityBadge, { backgroundColor: severityInfo.bg }]}>
+            {/* <View style={[styles.severityBadge, { backgroundColor: severityInfo.bg }]}>
               <MaterialCommunityIcons name={severityInfo.icon as any} size={14} color={severityInfo.text} />
               <Text style={[styles.severityBadgeText, { color: severityInfo.text }]}>{item.severity}</Text>
-            </View>
+            </View> */}
           </View>
           {isFamilyTreatment && (
             <View>

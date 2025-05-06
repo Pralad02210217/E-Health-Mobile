@@ -75,22 +75,36 @@ function AuthenticatedTabs() {
         options={{
           title: 'Home',
            // tabBarIcon: ({ color, size }) => ( /* ... */ ),
-        }}
-      />
-      <Tab.Screen
-        name="FeedsTab"
-        component={FeedsScreen}
-        options={{
-          title: 'Feeds',
-           // tabBarIcon: ({ color, size }) => ( /* ... */ ),
-        }}
-      />
-      {showVerifyLeavesTab && (
-        <Tab.Screen
-          name="VerifyLeavesTab"
-          component={StudentHealthVisitsScreen}
+            tabBarIcon: ({ color, size }) => (
+            <View style={{ width: size, height: size, borderRadius: size/2, backgroundColor: color }}>
+              <Text style={{ color: 'white', textAlign: 'center' }}>H</Text>
+            </View>
+            ),
+          }}
+          />
+          <Tab.Screen
+          name="FeedsTab"
+          component={FeedsScreen}
           options={{
+            title: 'Feeds',
+            tabBarIcon: ({ color, size }) => (
+            <View style={{ width: size, height: size, borderRadius: 4, backgroundColor: color }}>
+              <Text style={{ color: 'white', textAlign: 'center' }}>F</Text>
+            </View>
+            ),
+          }}
+          />
+          {showVerifyLeavesTab && (
+          <Tab.Screen
+            name="VerifyLeavesTab"
+            component={StudentHealthVisitsScreen}
+            options={{
             title: 'Verify Leaves',
+            tabBarIcon: ({ color, size }) => (
+            <View style={{ width: size, height: size, borderRadius: 4, backgroundColor: color }}>
+              <Text style={{ color: 'white', textAlign: 'center' }}>V</Text>
+            </View>
+            ),
              // tabBarIcon: ({ color, size }) => ( /* ... */ ),
           }}
         />

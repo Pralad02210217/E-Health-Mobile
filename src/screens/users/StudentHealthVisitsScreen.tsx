@@ -29,6 +29,7 @@ interface Treatment {
     doctorId: string;
     severity: "MILD" | "MODERATE" | "SEVERE";
     notes: string;
+    leaveNotes?: string;
     createdAt: string;
     departmentId: string;
     patientName: string;
@@ -218,7 +219,14 @@ const StudentHealthVisitsScreen = () => {
         setIsSearchActive(false);
         setSelectedDate(new Date());
     };
-
+    const getSeverityText = (severity: string) => {
+      switch (severity.toLowerCase()) {
+          case 'mild': return 'No Rest Required';
+          case 'moderate': return 'Maybe Rest Required';
+          case 'severe': return 'Rest Required';
+          default: return severity;
+      }
+    };
 
   const isLoading = isAuthLoading || isTreatmentsLoading || isProgrammesLoading;
   const isError = isTreatmentsError || isProgrammesError;
@@ -241,10 +249,6 @@ const StudentHealthVisitsScreen = () => {
            </View>
        );
    }
-
-
-  console.log('Rendering Student Health Visits Screen');
-  console.log('Filtered Treatments count:', filteredTreatments!.length);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -364,7 +368,7 @@ const StudentHealthVisitsScreen = () => {
                        </View>
                        <View style={styles.severityBadge}>
                            <Text style={[styles.severityText, { color: getSeverityColor(item.severity) }]}>
-                               {item.severity}
+                               {getSeverityText(item.severity)}
                             </Text>
                         </View>
                     </View>
@@ -379,6 +383,11 @@ const StudentHealthVisitsScreen = () => {
                              <Text style={styles.itemValueText}>{formatVisitTime(item.createdAt)}</Text>
                         </View>
                     </View>
+                        {item.severity !== 'MILD' && (
+                          <View style={styles.itemDateTime}>
+                            <Text style={styles.itemLabel}>{item.leaveNotes}</Text>
+                          </View>
+                        )}
                  </View>
                )}
                contentContainerStyle={styles.listContentContainer}
